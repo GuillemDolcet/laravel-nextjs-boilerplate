@@ -10,43 +10,40 @@ import {
 } from "@/components/ui/card";
 import Input from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {useLocale, useTranslations} from "next-intl";
+import {useTranslations} from "next-intl";
 import {useState} from 'react';
 import React from 'react';
-
-interface SubmitPayload {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    locale: string;
-    setErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
-}
-
-interface SignUpFormProps {
-    className?: string;
-    submitRequest: (payload: SubmitPayload) => void;
-}
+import {useAuth} from "@/hooks/auth";
 
 type ErrorMessage = {
     code?: string;
     message?: string;
 };
 
-export default function SignUpForm({submitRequest, className, ...props}: SignUpFormProps) {
+interface SignUpFormProps {
+    className?: string;
+    auth: ReturnType<typeof useAuth>;
+}
+
+export default function SignUpForm({auth, className, ...props}: SignUpFormProps) {
     const translations = useTranslations('Auth');
+    const { register } = auth;
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
-    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({})
-    const locale = useLocale();
+    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
+    const [status, setStatus] = useState<string | null>(null);
 
     const submitForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        const newErrors: Record<string, (string | { code?: string; message?: string })[]> = {};
+        // Limpiamos los errores anteriores
+        setErrors({});
+
+        // Validaciones del lado del cliente
+        const newErrors: Record<string, ErrorMessage[]> = {};
 
         if (!name.trim()) {
             newErrors.name = [{ code: 'required_name' }];
@@ -71,16 +68,16 @@ export default function SignUpForm({submitRequest, className, ...props}: SignUpF
             return;
         }
 
-        submitRequest({
+        // Llamamos directamente a la función de registro del hook
+        register({
             name,
             email,
             password,
             password_confirmation: passwordConfirmation,
-            locale,
             setErrors,
+            setStatus
         });
     };
-
 
     return (
         <form onSubmit={submitForm} className={cn("flex flex-col gap-6", className)} {...props}>
@@ -136,7 +133,7 @@ export default function SignUpForm({submitRequest, className, ...props}: SignUpF
                         </div>
                         <div className="grid gap-3">
                             <div className="flex items-center">
-                                <Label htmlFor="password">{translations('password')}</Label>
+                                <Label htmlFor="password_confirmation">{translations('password_confirmation')}</Label>
                             </div>
                             <Input
                                 id="password_confirmation"

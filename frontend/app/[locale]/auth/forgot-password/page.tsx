@@ -1,17 +1,15 @@
-'use client'
+"use client";
 
-import {useAuth} from "@/hooks/auth";
+import { useAuth } from "@/hooks/auth";
 import ForgotPasswordForm from "@/components/forms/forgot-password-form";
 
 const ForgotPassword = () => {
-    const {forgotPassword} = useAuth({
-        middleware: 'guest',
-        redirectIfAuthenticated: '/admin',
-    })
+    const auth = useAuth({
+        middleware: "guest",
+        redirectIfAuthenticated: "/admin",
+    });
 
-    return (
-        <ForgotPasswordForm submitRequest={forgotPassword}/>
-    )
-}
+    return <ForgotPasswordForm auth={auth} />;
+};
 
-export default ForgotPassword
+export default ForgotPassword;

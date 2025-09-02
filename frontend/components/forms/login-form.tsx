@@ -11,44 +11,79 @@ import {
 import Input from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {useTranslations} from "next-intl";
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import React from 'react';
 import {Checkbox} from "@/components/ui/checkbox";
 import {Link} from '@/i18n/routing';
+import { useSearchParams } from "next/navigation";
+import {Alert, AlertTitle} from "@/components/ui/alert";
+import {CheckCircle2Icon} from "lucide-react";
+import {useAuth} from "@/hooks/auth";
 
-interface SubmitPayload {
-    email: string;
-    password: string;
-    remember: boolean;
-    setErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
-}
+type ErrorMessage = {
+    code?: string;
+    message?: string;
+};
 
 interface LoginFormProps {
     className?: string;
-    submitRequest: (payload: SubmitPayload) => void;
+    auth: ReturnType<typeof useAuth>;
 }
 
-export default function LoginForm({submitRequest, className, ...props}: LoginFormProps) {
+export default function LoginForm({auth, className, ...props}: LoginFormProps) {
     const translations = useTranslations('Auth');
+    const searchParams = useSearchParams();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [shouldRemember, setShouldRemember] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
+    const [status, setStatus] = useState<string | null>(null);
+
+    const { login } = auth;
+
+    useEffect(() => {
+        const resetParam = searchParams.get('reset');
+        if (!resetParam) return;
+
+        setStatus(atob(resetParam));
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete('reset');
+        window.history.replaceState({}, '', url.toString());
+
+        const timer = window.setTimeout(() => {
+            setStatus(null);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const submitForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        submitRequest({
+        setErrors({});
+        setStatus(null);
+
+        login({
             email,
             password,
             remember: shouldRemember,
             setErrors,
+            setStatus,
         });
     }
 
     return (
         <form onSubmit={submitForm} className={cn("flex flex-col gap-6", className)} {...props}>
+            {status === 'Your password has been reset.' && (
+                <div className="grid gap-3">
+                    <Alert variant="success">
+                        <CheckCircle2Icon />
+                        <AlertTitle>{translations('your_password_has_been_reset')}</AlertTitle>
+                    </Alert>
+                </div>
+            )}
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">{translations('welcome_back')}</CardTitle>

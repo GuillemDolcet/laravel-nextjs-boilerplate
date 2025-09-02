@@ -11,9 +11,9 @@ interface ErrorMessage {
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     type: "text" | "password" | "email";
-    errors?: string[];
+    errors?: ErrorMessage[];
     name: string;
-    setErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+    setErrors: React.Dispatch<React.SetStateAction<Record<string, ErrorMessage[]>>>;
     set: React.Dispatch<React.SetStateAction<string>>;
 }
 

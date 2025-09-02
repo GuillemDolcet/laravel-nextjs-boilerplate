@@ -1,24 +1,27 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/hooks/auth'
-import Loading from '@/app/[locale]/admin/Loading'
+import { ReactNode } from "react";
+import { useAuth } from "@/hooks/auth";
+import Loading from "@/app/[locale]/admin/Loading";
 
-const AppLayout = ({ children }) => {
-    const { user, logout } = useAuth({ middleware: 'auth' })
+type AppLayoutProps = {
+    children: ReactNode;
+};
 
-    if (!user) {
-        return <Loading />
+const AppLayout = ({ children }: AppLayoutProps) => {
+    const { user, logout } = useAuth({ middleware: "auth" });
+
+    if (!user || !user.email_verified_at) {
+        return <Loading />;
     }
 
     return (
-        <>
-            <div className="page border-primary">
-                <div className="min-h-screen bg-gray-100">
-                    <main>{children}</main>
-                </div>
+        <div className="page border-primary">
+            <div className="min-h-screen bg-gray-100">
+                <main>{children}</main>
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
 
-export default AppLayout
+export default AppLayout;
