@@ -26,12 +26,20 @@ interface RegisterProps {
     email: string;
     password: string;
     password_confirmation: string;
+    locale: string;
     setErrors: SetErrors;
     setStatus: SetStatus;
 }
 
 interface ForgotPasswordProps {
     email: string;
+    locale: string;
+    setErrors: SetErrors;
+    setStatus: SetStatus;
+}
+
+interface ResendEmailVerification {
+    locale: string;
     setErrors: SetErrors;
     setStatus: SetStatus;
 }
@@ -119,11 +127,11 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
         }
     };
 
-    const forgotPassword = async ({ setErrors, email, setStatus }: ForgotPasswordProps) => {
+    const forgotPassword = async ({ setErrors, email, setStatus, locale }: ForgotPasswordProps) => {
         await csrf();
         setErrors({});
         try {
-            const response = await axios.post('/forgot-password', { email });
+            const response = await axios.post('/forgot-password', { email, locale });
             setStatus(response.data.status);
         } catch (err: unknown) {
             const error = err as ErrorResponse;
@@ -158,9 +166,11 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
         router.push('/auth/login');
     };
 
-    const resendEmailVerification = ({ setStatus }: { setStatus: SetStatus }) => {
+    const resendEmailVerification = ({ setStatus, ...props }: ResendEmailVerification) => {
         axios
-            .post('/email/verification-notification')
+            .post('/email/verification-notification', {
+                ...props
+            })
             .then(response => setStatus(response.data.status));
     };
 

@@ -19,7 +19,9 @@ class EmailVerificationNotificationController extends Controller
             return redirect()->intended('/admin');
         }
 
-        $request->user()->notify(new VerifyEmailNotification);
+        $locale = $request->input('locale', app()->getLocale());
+
+        $request->user()->notify((new VerifyEmailNotification())->locale($locale));
 
         return response()->json(['status' => 'verification-link-sent']);
     }

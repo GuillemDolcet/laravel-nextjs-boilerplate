@@ -17,14 +17,14 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
      *
      * @var string
      */
-    public $token;
+    public string $token;
 
     /**
      * Create a notification instance.
      *
-     * @param  string  $token
+     * @param string $token
      */
-    public function __construct(#[\SensitiveParameter] $token)
+    public function __construct(#[\SensitiveParameter] string $token)
     {
         $this->token = $token;
     }
@@ -35,7 +35,7 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return array|string
      */
-    public function via($notifiable)
+    public function via(mixed $notifiable): array|string
     {
         return ['mail'];
     }
@@ -46,7 +46,7 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail($notifiable)
+    public function toMail(mixed $notifiable): MailMessage
     {
         return $this->buildMailMessage($this->resetUrl($notifiable));
     }
@@ -54,17 +54,21 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
     /**
      * Get the reset password notification mail message for the given URL.
      *
-     * @param  string  $url
+     * @param string $url
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    protected function buildMailMessage($url)
+    protected function buildMailMessage(string $url): MailMessage
     {
         return (new MailMessage)
-            ->subject(Lang::get('Reset Password Notification'))
-            ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::get('Reset Password'), $url)
-            ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(Lang::get('If you did not request a password reset, no further action is required.'));
+            ->subject(Lang::get('auth.reset_password_notification'))
+            ->line(Lang::get('auth.reset_password_notification_text'))
+            ->action(Lang::get('auth.reset_password'), $url)
+            ->line(Lang::get('auth.reset_password_expires',
+                [
+                    'count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')
+                ]
+            ))
+            ->line(Lang::get('auth.no_further_action'));
     }
 
     /**
@@ -73,7 +77,7 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
      * @param  mixed  $notifiable
      * @return string
      */
-    protected function resetUrl($notifiable)
+    protected function resetUrl(mixed $notifiable): string
     {
         return config('app.frontend_url')."/auth/password-reset/$this->token?email={$notifiable->getEmailForPasswordReset()}";
     }

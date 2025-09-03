@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Input from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTranslations } from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import { useState } from "react";
 import React from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
@@ -28,6 +28,7 @@ export default function ForgotPasswordForm({
                                                ...props
                                            }: ForgotPasswordFormProps) {
     const translations = useTranslations("Auth");
+    const locale = useLocale();
 
     const [email, setEmail] = useState("");
     const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
@@ -55,6 +56,7 @@ export default function ForgotPasswordForm({
 
         await forgotPassword({
             email,
+            locale,
             setErrors,
             setStatus,
         });

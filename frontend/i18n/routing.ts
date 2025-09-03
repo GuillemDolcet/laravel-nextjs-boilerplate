@@ -9,7 +9,6 @@ export const routing = defineRouting({
     defaultLocale: 'en'
 });
 
-export type Pathnames = keyof typeof routing.pathnames;
 export type Locale = (typeof routing.locales)[number];
 
 // Lightweight wrappers around Next.js' navigation APIs

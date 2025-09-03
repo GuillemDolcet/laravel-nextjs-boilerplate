@@ -4,9 +4,14 @@ import { useAuth } from "@/hooks/auth";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTranslations } from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import { CheckCircle2Icon } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+
+type ErrorMessage = {
+    code?: string;
+    message?: string;
+};
 
 const Page = () => {
     const { logout, resendEmailVerification } = useAuth({
@@ -15,8 +20,9 @@ const Page = () => {
     });
 
     const translations = useTranslations("Auth");
-
+    const locale = useLocale();
     const [status, setStatus] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
 
     return (
         <>
@@ -45,7 +51,7 @@ const Page = () => {
                         </div>
                         <div className="flex justify-between">
                             <Button
-                                onClick={() => resendEmailVerification({ setStatus })}
+                                onClick={() => resendEmailVerification({ setStatus, setErrors, locale })}
                                 className="cursor-pointer"
                             >
                                 {translations("resend_verification_email")}

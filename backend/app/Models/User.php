@@ -34,11 +34,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    public function sendPasswordResetNotification($token): void
-    {
-        $this->notify(new ResetPasswordNotification($token));
-    }
-
     /**
      * Get the attributes that should be cast.
      *

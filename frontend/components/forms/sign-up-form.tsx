@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import Input from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {useTranslations} from "next-intl";
+import {useLocale, useTranslations} from "next-intl";
 import {useState} from 'react';
 import React from 'react';
 import {useAuth} from "@/hooks/auth";
@@ -28,6 +28,7 @@ interface SignUpFormProps {
 export default function SignUpForm({auth, className, ...props}: SignUpFormProps) {
     const translations = useTranslations('Auth');
     const { register } = auth;
+    const locale = useLocale();
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -39,10 +40,8 @@ export default function SignUpForm({auth, className, ...props}: SignUpFormProps)
     const submitForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        // Limpiamos los errores anteriores
         setErrors({});
 
-        // Validaciones del lado del cliente
         const newErrors: Record<string, ErrorMessage[]> = {};
 
         if (!name.trim()) {
@@ -68,12 +67,12 @@ export default function SignUpForm({auth, className, ...props}: SignUpFormProps)
             return;
         }
 
-        // Llamamos directamente a la función de registro del hook
-        register({
+        await register({
             name,
             email,
             password,
             password_confirmation: passwordConfirmation,
+            locale,
             setErrors,
             setStatus
         });
