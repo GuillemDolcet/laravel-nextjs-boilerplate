@@ -5,24 +5,32 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {useLocale, useTranslations} from "next-intl";
-import { CheckCircle2Icon } from "lucide-react";
+import {CheckCircle2Icon, CircleAlert} from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import Status from "@/components/ui/status";
 
-type ErrorMessage = {
+type ErrorMessageType = {
     code?: string;
+    message?: string;
+};
+
+type StatusType = {
+    success: boolean;
+    code: string;
     message?: string;
 };
 
 const Page = () => {
     const { logout, resendEmailVerification } = useAuth({
         middleware: "auth",
-        redirectIfAuthenticated: "/admin",
+        redirectIfAuthenticated: "/dashboard",
     });
 
     const translations = useTranslations("Auth");
     const locale = useLocale();
-    const [status, setStatus] = useState<string | null>(null);
-    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
+    const [status, setStatus] = useState<StatusType | null>(null);
+    const [errors, setErrors] = useState<Record<string, ErrorMessageType[]>>({});
+    const [loading, setLoading] = useState(false);
 
     return (
         <>
@@ -34,16 +42,7 @@ const Page = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
-                        {status === "verification-link-sent" && (
-                            <div className="grid gap-3">
-                                <Alert variant="success">
-                                    <CheckCircle2Icon />
-                                    <AlertTitle>
-                                        {translations("success_resend_verification_email")}
-                                    </AlertTitle>
-                                </Alert>
-                            </div>
-                        )}
+                        <Status status={status} />
                         <div className="grid gap-3">
                             <div>{translations("thanks_for_signing_up")}</div>
                             <div>{translations("before_getting_started_verify_email")}</div>

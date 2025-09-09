@@ -6,7 +6,7 @@ import ForgotPasswordForm from "@/components/forms/forgot-password-form";
 const ForgotPassword = () => {
     const auth = useAuth({
         middleware: "guest",
-        redirectIfAuthenticated: "/admin",
+        redirectIfAuthenticated: "/dashboard",
     });
 
     return <ForgotPasswordForm auth={auth} />;

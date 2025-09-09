@@ -3,43 +3,54 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Notifications\VerifyEmailNotification;
-use Illuminate\Http\Request;
+use App\Repositories\UsersRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
 {
+    /**
+     * Users repository instance.
+     *
+     * @param UsersRepository $usersRepository
+     */
+    protected UsersRepository $usersRepository;
+
+    /**
+     * Class constructor.
+     *
+     * @return void
+     */
+    public function __construct(UsersRepository $usersRepository)
+    {
+        $this->usersRepository = $usersRepository;
+    }
+
     /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(RegisterRequest $request): Response|JsonResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'locale' => ['required', Rule::in(['en', 'es'])],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $user = $this->usersRepository->create($request->validated());
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
+        if ($user) {
+            $locale = $request->input('locale', app()->getLocale());
 
-        $locale = $request->input('locale', app()->getLocale());
+            $user->notify((new VerifyEmailNotification())->locale($locale));
 
-        $user->notify((new VerifyEmailNotification())->locale($locale));
+            Auth::login($user);
 
-        Auth::login($user);
+            return response()->noContent();
+        }
 
-        return response()->noContent();
+        return response()->json([
+            'code' => 'error_create_user',
+            'message' => 'An error occurred while creating your account. Please try again later.'
+        ], 500);
     }
 }

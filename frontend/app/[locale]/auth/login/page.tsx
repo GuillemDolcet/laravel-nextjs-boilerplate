@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/auth";
 const Login = () => {
     const auth = useAuth({
         middleware: "guest",
-        redirectIfAuthenticated: "/admin",
+        redirectIfAuthenticated: "/dashboard",
     });
 
     return <LoginForm auth={auth} />;

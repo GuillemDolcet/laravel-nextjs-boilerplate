@@ -9,11 +9,18 @@ import {useLocale, useTranslations} from "next-intl";
 import { useState } from "react";
 import React from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2Icon } from "lucide-react";
+import { CheckCircle2Icon, CircleAlert } from "lucide-react";
 import { useAuth } from "@/hooks/auth";
+import Status from "@/components/ui/status";
 
-type ErrorMessage = {
+type ErrorMessageType = {
     code?: string;
+    message?: string;
+};
+
+type StatusType = {
+    success: boolean;
+    code: string;
     message?: string;
 };
 
@@ -27,12 +34,13 @@ export default function ForgotPasswordForm({
                                                auth,
                                                ...props
                                            }: ForgotPasswordFormProps) {
-    const translations = useTranslations("Auth");
+    const translations = useTranslations();
     const locale = useLocale();
 
     const [email, setEmail] = useState("");
-    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
-    const [status, setStatus] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, ErrorMessageType[]>>({});
+    const [status, setStatus] = useState<StatusType | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const { forgotPassword } = auth;
 
@@ -41,12 +49,13 @@ export default function ForgotPasswordForm({
 
         setErrors({});
         setStatus(null);
+        setLoading(true);
 
-        const newErrors: Record<string, ErrorMessage[]> = {};
+        const newErrors: Record<string, ErrorMessageType[]> = {};
         if (!email.trim()) {
-            newErrors.email = [{ code: "required_email" }];
+            newErrors.email = [{ code: "email_required" }];
         } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-            newErrors.email = [{ code: "invalid_email" }];
+            newErrors.email = [{ code: "email_invalid" }];
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -54,12 +63,16 @@ export default function ForgotPasswordForm({
             return;
         }
 
-        await forgotPassword({
-            email,
-            locale,
-            setErrors,
-            setStatus,
-        });
+        try {
+            await forgotPassword({
+                email,
+                locale,
+                setErrors,
+                setStatus,
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -71,26 +84,19 @@ export default function ForgotPasswordForm({
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">
-                        {translations("reset_password")}
+                        {translations("auth.reset_password")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
-                        {status === 'We have emailed your password reset link.' && (
-                            <div className="grid gap-3">
-                                <Alert variant="success">
-                                    <CheckCircle2Icon />
-                                    <AlertTitle>{translations('we_have_emailed_your_password_reset_link')}</AlertTitle>
-                                </Alert>
-                            </div>
-                        )}
+                        <Status status={status} />
                         <div className="grid gap-3">
-                            <Label htmlFor="email">{translations("email")}</Label>
+                            <Label htmlFor="email">{translations("auth.email")}</Label>
                             <Input
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder={translations("placeholder_email")}
+                                placeholder={translations("auth.placeholder_email")}
                                 value={email}
                                 errors={errors.email}
                                 set={setEmail}
@@ -98,8 +104,8 @@ export default function ForgotPasswordForm({
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full cursor-pointer">
-                            {translations("send_reset_link")}
+                        <Button type="submit" className="w-full cursor-pointer" isLoading={loading}>
+                            {translations("auth.send_reset_link")}
                         </Button>
                     </div>
                 </CardContent>

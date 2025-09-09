@@ -17,11 +17,18 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Link} from '@/i18n/routing';
 import { useSearchParams } from "next/navigation";
 import {Alert, AlertTitle} from "@/components/ui/alert";
-import {CheckCircle2Icon} from "lucide-react";
+import {CheckCircle2Icon, CircleAlert, Loader2Icon} from "lucide-react";
 import {useAuth} from "@/hooks/auth";
+import Status from "@/components/ui/status";
 
-type ErrorMessage = {
+type ErrorMessageType = {
     code?: string;
+    message?: string;
+};
+
+type StatusType = {
+    success: boolean;
+    code: string;
     message?: string;
 };
 
@@ -31,14 +38,15 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({auth, className, ...props}: LoginFormProps) {
-    const translations = useTranslations('Auth');
+    const translations = useTranslations();
     const searchParams = useSearchParams();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [shouldRemember, setShouldRemember] = useState(false);
-    const [errors, setErrors] = useState<Record<string, ErrorMessage[]>>({});
-    const [status, setStatus] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, ErrorMessageType[]>>({});
+    const [status, setStatus] = useState<StatusType | null>(null);
+    const [loading, setLoading] = useState(false);
 
     const { login } = auth;
 
@@ -46,7 +54,10 @@ export default function LoginForm({auth, className, ...props}: LoginFormProps) {
         const resetParam = searchParams.get('reset');
         if (!resetParam) return;
 
-        setStatus(atob(resetParam));
+        setStatus({
+            success: true,
+            code: atob(resetParam)
+        });
 
         const url = new URL(window.location.href);
         url.searchParams.delete('reset');
@@ -64,32 +75,30 @@ export default function LoginForm({auth, className, ...props}: LoginFormProps) {
 
         setErrors({});
         setStatus(null);
+        setLoading(true);
 
-        login({
-            email,
-            password,
-            remember: shouldRemember,
-            setErrors,
-            setStatus,
-        });
+        try {
+            await login({
+                email,
+                password,
+                remember: shouldRemember,
+                setErrors,
+                setStatus,
+            });
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
         <form onSubmit={submitForm} className={cn("flex flex-col gap-6", className)} {...props}>
-            {status === 'Your password has been reset.' && (
-                <div className="grid gap-3">
-                    <Alert variant="success">
-                        <CheckCircle2Icon />
-                        <AlertTitle>{translations('your_password_has_been_reset')}</AlertTitle>
-                    </Alert>
-                </div>
-            )}
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl">{translations('welcome_back')}</CardTitle>
+                    <CardTitle className="text-xl">{translations('auth.welcome_back')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
+                        <Status status={status} />
                         <div className="flex flex-col gap-4">
                             <Button variant="outline" className="w-full cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -98,22 +107,22 @@ export default function LoginForm({auth, className, ...props}: LoginFormProps) {
                                         fill="currentColor"
                                     />
                                 </svg>
-                                {translations('login_google')}
+                                {translations('auth.login_google')}
                             </Button>
                         </div>
                         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                             <span className="bg-card text-muted-foreground relative z-10 px-2">
-                                {translations('or_continue_with')}
+                                {translations('auth.or_continue_with')}
                             </span>
                         </div>
                         <div className="grid gap-6">
                             <div className="grid gap-3">
-                                <Label htmlFor="email">{translations('email')}</Label>
+                                <Label htmlFor="email">{translations('auth.email')}</Label>
                                 <Input
                                     id="email"
                                     name="email"
                                     type="email"
-                                    placeholder={ translations('placeholder_email') }
+                                    placeholder={ translations('auth.placeholder_email') }
                                     value={email}
                                     errors={errors.email}
                                     set={setEmail}
@@ -123,9 +132,9 @@ export default function LoginForm({auth, className, ...props}: LoginFormProps) {
                             </div>
                             <div className="grid gap-3">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">{translations('password')}</Label>
+                                    <Label htmlFor="password">{translations('auth.password')}</Label>
                                     <Link href="/auth/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">
-                                        {translations('forgot_your_password')}
+                                        {translations('auth.forgot_your_password')}
                                     </Link>
                                 </div>
                                 <Input
@@ -148,16 +157,16 @@ export default function LoginForm({auth, className, ...props}: LoginFormProps) {
                                         setShouldRemember(checked)
                                     }
                                 />
-                                <Label htmlFor="remember_me">{ translations('remember_me') }</Label>
+                                <Label htmlFor="remember_me">{ translations('auth.remember_me') }</Label>
                             </div>
-                            <Button type="submit" className="w-full cursor-pointer">
-                                {translations('login')}
+                            <Button type="submit" className="w-full cursor-pointer" isLoading={loading}>
+                                {translations('auth.login')}
                             </Button>
                         </div>
                         <div className="text-center text-sm">
-                            {translations('dont_have_an_account')}
+                            {translations('auth.dont_have_an_account')}
                             <Link href="/auth/sign-up" className="underline underline-offset-4 ms-1">
-                                {translations('sign_up')}
+                                {translations('auth.sign_up')}
                             </Link>
                         </div>
                     </div>

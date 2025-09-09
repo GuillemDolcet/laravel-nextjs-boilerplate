@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { useAuth } from "@/hooks/auth";
-import Loading from "@/app/[locale]/admin/Loading";
+import Loading from "@/app/[locale]/dashboard/Loading";
 
 type AppLayoutProps = {
     children: ReactNode;

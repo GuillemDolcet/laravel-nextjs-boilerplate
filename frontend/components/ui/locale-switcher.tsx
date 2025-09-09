@@ -19,7 +19,7 @@ export default function LocaleSwitcher() {
     const [, startTransition] = useTransition();
     const pathname = usePathname();
     const params = useParams();
-    const translations = useTranslations('Idioms');
+    const translations = useTranslations('languages');
     const locale = useLocale();
 
     function onSelectChange(locale: string) {

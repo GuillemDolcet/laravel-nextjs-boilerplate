@@ -4,14 +4,20 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
 
-type ErrorMessage = {
+type ErrorMessageType = {
     code?: string;
     message?: string;
 };
 
-type SetErrors = React.Dispatch<React.SetStateAction<Record<string, ErrorMessage[]>>>;
+type StatusType = {
+    success: boolean;
+    code: string;
+    message?: string;
+};
 
-type SetStatus = React.Dispatch<React.SetStateAction<string | null>>;
+type SetErrors = React.Dispatch<React.SetStateAction<Record<string, ErrorMessageType[]>>>;
+
+type SetStatus = React.Dispatch<React.SetStateAction<StatusType | null>>;
 
 interface LoginProps {
     email: string;
@@ -62,7 +68,9 @@ interface ErrorResponse {
     response: {
         status: number;
         data: {
-            errors?: Record<string, ErrorMessage[]>;
+            code?: string;
+            errors?: Record<string, ErrorMessageType[]>;
+            message?: string;
         };
     };
 }
@@ -86,7 +94,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
             } catch (err: unknown) {
                 const error = err as ErrorResponse;
                 if (error.response?.status === 409) {
-                    router.push('/admin');
+                    router.push('/dashboard');
 
                     return null;
                 }
@@ -97,65 +105,84 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
 
     const csrf = () => axios.get('/sanctum/csrf-cookie');
 
-    const register = async ({ setErrors, ...props }: RegisterProps) => {
-        await csrf();
+    const register = async ({ setErrors, setStatus, ...props }: RegisterProps) => {
         setErrors({});
         try {
+            await csrf();
             await axios.post('/register', props);
             await mutate();
         } catch (err: unknown) {
             const error = err as ErrorResponse;
             if (error.response?.status !== 422) {
-                throw error;
+                setStatus({
+                    success: false,
+                    code: error.response?.data?.code ?? 'server_error',
+                });
+            } else {
+                setErrors(error.response.data.errors ?? {});
             }
-            setErrors(error.response.data.errors ?? {});
         }
     };
 
-    const login = async ({ setErrors, ...props }: LoginProps) => {
-        await csrf();
+    const login = async ({ setErrors, setStatus, ...props }: LoginProps) => {
         setErrors({});
         try {
+            await csrf();
             await axios.post('/login', props);
             await mutate();
         } catch (err: unknown) {
             const error = err as ErrorResponse;
             if (error.response?.status !== 422) {
-                throw error;
+                setStatus({
+                    success: false,
+                    code: error.response?.data?.code ?? 'server_error',
+                });
+            } else {
+                setErrors(error.response.data.errors ?? {});
             }
-            setErrors(error.response.data.errors ?? {});
         }
     };
 
     const forgotPassword = async ({ setErrors, email, setStatus, locale }: ForgotPasswordProps) => {
-        await csrf();
         setErrors({});
         try {
+            await csrf();
             const response = await axios.post('/forgot-password', { email, locale });
-            setStatus(response.data.status);
+            setStatus({
+                success: true,
+                code: response.data.code,
+            });
         } catch (err: unknown) {
             const error = err as ErrorResponse;
             if (error.response?.status !== 422) {
-                throw error;
+                setStatus({
+                    success: false,
+                    code: error.response?.data?.code ?? 'server_error',
+                });
+            } else {
+                setErrors(error.response.data.errors ?? {});
             }
-            setErrors(error.response.data.errors ?? {});
         }
     };
 
-    const resetPassword = async ({ setErrors, ...props }: ResetPasswordProps) => {
-        await csrf();
+    const resetPassword = async ({ setErrors, setStatus, ...props }: ResetPasswordProps) => {
         setErrors({});
         try {
+            await csrf();
             const response = await axios.post('/reset-password', { token: params.token, ...props });
-            if (response.data?.status) { // Verificación opcional
+            if (response.data?.status) {
                 router.push('/auth/login?reset=' + btoa(response.data.status));
             }
         } catch (err: unknown) {
             const error = err as ErrorResponse;
             if (error.response?.status !== 422) {
-                throw error;
+                setStatus({
+                    success: false,
+                    code: error.response?.data?.code ?? 'server_error',
+                });
+            } else {
+                setErrors(error.response.data.errors ?? {});
             }
-            setErrors(error.response.data.errors ?? {});
         }
     };
 
@@ -171,7 +198,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
             .post('/email/verification-notification', {
                 ...props
             })
-            .then(response => setStatus(response.data.status));
+            .then(response => setStatus({
+                success: true,
+                code: response.data.code,
+            }));
     };
 
     useEffect(() => {

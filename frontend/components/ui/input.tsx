@@ -4,16 +4,16 @@ import {cn} from "@/lib/utils";
 import {useTranslations} from "next-intl";
 import React from 'react';
 
-interface ErrorMessage {
+interface ErrorMessageType {
     code?: string;
     message?: string;
 }
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     type: "text" | "password" | "email";
-    errors?: ErrorMessage[];
+    errors?: ErrorMessageType[];
     name: string;
-    setErrors: React.Dispatch<React.SetStateAction<Record<string, ErrorMessage[]>>>;
+    setErrors: React.Dispatch<React.SetStateAction<Record<string, ErrorMessageType[]>>>;
     set: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -27,7 +27,7 @@ export default function Input({
                                   type,
                                   ...props
                               }: InputProps) {
-    const translations = useTranslations('Errors');
+    const translations = useTranslations('errors');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         set(event.target.value);
@@ -41,15 +41,16 @@ export default function Input({
         });
     };
 
-    function getErrorMessage(err: string | ErrorMessage) {
+    function getErrorMessageType(err: string | ErrorMessageType) {
         if (typeof err === "string") {
             return err;
         }
 
         if (typeof err === "object" && err.code) {
             const translatedMessage = translations(err.code);
-            return translatedMessage !== 'Errors.' + err.code ? translatedMessage : err.message;
+            return translatedMessage !== 'errors.' + err.code ? translatedMessage : err.message;
         }
+
         return translations('unknown');
     }
 
@@ -77,7 +78,7 @@ export default function Input({
                     <div className="text-xs mb-1 text-red-700">
                         {errors.map((err, index) => (
                             <div key={index}>
-                                {getErrorMessage(err)}
+                                {getErrorMessageType(err)}
                             </div>
                         ))}
                     </div>
