@@ -3,83 +3,16 @@ import axios from '@/lib/axios';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
-
-type ErrorMessageType = {
-    code?: string;
-    message?: string;
-};
-
-type StatusType = {
-    success: boolean;
-    code: string;
-    message?: string;
-};
-
-type SetErrors = React.Dispatch<React.SetStateAction<Record<string, ErrorMessageType[]>>>;
-
-type SetStatus = React.Dispatch<React.SetStateAction<StatusType | null>>;
-
-interface LoginProps {
-    email: string;
-    password: string;
-    remember: boolean;
-    setErrors: SetErrors;
-    setStatus: SetStatus;
-}
-
-interface RegisterProps {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    locale: string;
-    setErrors: SetErrors;
-    setStatus: SetStatus;
-}
-
-interface ForgotPasswordProps {
-    email: string;
-    locale: string;
-    setErrors: SetErrors;
-    setStatus: SetStatus;
-}
-
-interface ResendEmailVerification {
-    locale: string;
-    setErrors: SetErrors;
-    setStatus: SetStatus;
-}
-
-interface ResetPasswordProps {
-    token?: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    setErrors: SetErrors;
-    setStatus: SetStatus;
-}
-
-interface UseAuthOptions {
-    middleware?: 'auth' | 'guest';
-    redirectIfAuthenticated?: string;
-}
-
-interface ErrorResponse {
-    response: {
-        status: number;
-        data: {
-            code?: string;
-            errors?: Record<string, ErrorMessageType[]>;
-            message?: string;
-        };
-    };
-}
-
-interface User {
-    name: string;
-    email: string;
-    email_verified_at: string | null;
-}
+import {ErrorResponse} from "@/types/common";
+import {
+    ForgotPasswordProps,
+    LoginProps,
+    RegisterProps,
+    ResendEmailVerification,
+    ResetPasswordProps,
+    UseAuthOptions,
+    User
+} from "@/types/auth";
 
 export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions = {}) => {
     const router = useRouter();
@@ -170,8 +103,8 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
         try {
             await csrf();
             const response = await axios.post('/reset-password', { token: params.token, ...props });
-            if (response.data?.status) {
-                router.push('/auth/login?reset=' + btoa(response.data.status));
+            if (response.data?.code) {
+                router.push('/auth/login?reset=' + btoa(response.data.code));
             }
         } catch (err: unknown) {
             const error = err as ErrorResponse;
@@ -193,15 +126,25 @@ export const useAuth = ({ middleware, redirectIfAuthenticated }: UseAuthOptions 
         router.push('/auth/login');
     };
 
-    const resendEmailVerification = ({ setStatus, ...props }: ResendEmailVerification) => {
-        axios
-            .post('/email/verification-notification', {
-                ...props
-            })
-            .then(response => setStatus({
+    const resendEmailVerification = async ({ setErrors, setStatus, ...props }: ResendEmailVerification) => {
+        try {
+            const response = await axios.post('/email/verification-notification', { ...props });
+
+            setStatus({
                 success: true,
                 code: response.data.code,
-            }));
+            })
+        } catch (err: unknown) {
+            const error = err as ErrorResponse;
+            if (error.response?.status !== 422) {
+                setStatus({
+                    success: false,
+                    code: error.response?.data?.code ?? 'server_error',
+                });
+            } else {
+                setErrors(error.response.data.errors ?? {});
+            }
+        }
     };
 
     useEffect(() => {

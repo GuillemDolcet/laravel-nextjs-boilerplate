@@ -1,40 +1,59 @@
 "use client";
 
 import { useAuth } from "@/hooks/auth";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {useLocale, useTranslations} from "next-intl";
-import {CheckCircle2Icon, CircleAlert} from "lucide-react";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import Status from "@/components/ui/status";
-
-type ErrorMessageType = {
-    code?: string;
-    message?: string;
-};
-
-type StatusType = {
-    success: boolean;
-    code: string;
-    message?: string;
-};
+import {ErrorMessageType, StatusType} from "@/types/common";
+import {useSearchParams} from "next/navigation";
 
 const Page = () => {
     const { logout, resendEmailVerification } = useAuth({
         middleware: "auth",
         redirectIfAuthenticated: "/dashboard",
     });
-
-    const translations = useTranslations("Auth");
+    const searchParams = useSearchParams();
+    const translations = useTranslations("auth");
     const locale = useLocale();
     const [status, setStatus] = useState<StatusType | null>(null);
-    const [errors, setErrors] = useState<Record<string, ErrorMessageType[]>>({});
+    const [, setErrors] = useState<Record<string, ErrorMessageType[]>>({});
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const errorParam = searchParams.get('error');
+        if (!errorParam) return;
+
+        setStatus({
+            success: false,
+            code: atob(errorParam)
+        });
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete('reset');
+        window.history.replaceState({}, '', url.toString());
+
+    }, []);
+
+    const submitResendEmailVerification= async () => {
+        setErrors({});
+        setStatus(null);
+        setLoading(true);
+
+        try {
+            resendEmailVerification({
+                setStatus,
+                setErrors,
+                locale
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <>
-            <Card>
+            <Card className="w-full">
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">
                         {translations("verify_email")}
@@ -50,8 +69,9 @@ const Page = () => {
                         </div>
                         <div className="flex justify-between">
                             <Button
-                                onClick={() => resendEmailVerification({ setStatus, setErrors, locale })}
+                                onClick={() => submitResendEmailVerification()}
                                 className="cursor-pointer"
+                                isLoading={loading}
                             >
                                 {translations("resend_verification_email")}
                             </Button>

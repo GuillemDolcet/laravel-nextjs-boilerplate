@@ -37,13 +37,18 @@ class NewPasswordController extends Controller
 
         if ($status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => [
+                    [
+                        'code' => 'user_not_found_with_email',
+                        'message' => __($status)
+                    ]
+                ]
             ]);
         }
 
         return response()->json([
-            'code' => 'success_password_reset_link_sent',
-            'message' => 'We have emailed your password reset link.'
+            'code' => 'success_password_reset',
+            'message' => 'Your password has been reset.'
         ]);
     }
 }

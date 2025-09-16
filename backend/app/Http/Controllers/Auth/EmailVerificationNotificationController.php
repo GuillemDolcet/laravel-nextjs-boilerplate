@@ -16,7 +16,7 @@ class EmailVerificationNotificationController extends Controller
     public function store(Request $request): JsonResponse|RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended('/admin');
+            return redirect()->intended('/dashboard');
         }
 
         $locale = $request->input('locale', app()->getLocale());

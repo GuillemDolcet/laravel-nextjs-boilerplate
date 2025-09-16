@@ -45,7 +45,9 @@ class LoginRequest extends BaseRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => [
+                    ['code' => 'credentials_do_not_match', 'message' => __('auth.failed')]
+                ]
             ]);
         }
 
@@ -68,10 +70,15 @@ class LoginRequest extends BaseRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'email' => [
+                [
+                    'code' => 'throttle_error',
+                    'message' => trans('auth.throttle', [
+                        'seconds' => $seconds,
+                        'minutes' => ceil($seconds / 60),
+                    ])
+                ]
+            ]
         ]);
     }
 

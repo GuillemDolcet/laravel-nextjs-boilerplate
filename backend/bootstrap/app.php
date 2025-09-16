@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'frontend.auth' => \App\Http\Middleware\RedirectIfNotAuthenticatedToFrontend::class,
+            'frontend.signed' => \App\Http\Middleware\RedirectIfNotSignedToFrontend::class,
         ]);
 
         //

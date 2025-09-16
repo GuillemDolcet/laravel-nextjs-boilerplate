@@ -13,30 +13,13 @@ import { Label } from "@/components/ui/label";
 import { useTranslations } from "next-intl";
 import {useEffect, useState} from 'react';
 import React from 'react';
-import {Alert, AlertTitle} from "@/components/ui/alert";
-import {CheckCircle2Icon, CircleAlert} from "lucide-react";
 import { useSearchParams } from 'next/navigation'
-import { useAuth } from "@/hooks/auth";
 import Status from "@/components/ui/status";
+import { StatusType, ErrorMessageType } from "@/types/common";
+import {AuthFormProps} from "@/types/auth";
 
-type ErrorMessageType = {
-    code?: string;
-    message?: string;
-};
-
-type StatusType = {
-    success: boolean;
-    code: string;
-    message?: string;
-};
-
-interface PasswordResetFormProps {
-    className?: string;
-    auth: ReturnType<typeof useAuth>;
-}
-
-export default function PasswordResetForm({ auth, className, ...props }: PasswordResetFormProps) {
-    const translations = useTranslations();
+export default function PasswordResetForm({ auth, className, ...props }: AuthFormProps) {
+    const translations = useTranslations('auth');
     const searchParams = useSearchParams()
 
     const [email, setEmail] = useState('');
@@ -49,20 +32,17 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
     const { resetPassword } = auth;
 
     useEffect(() => {
-        setEmail(searchParams.get('email') as string);
-    }, [searchParams.get('email')]);
+        setEmail(searchParams.get('email') as string ?? '');
+    }, [searchParams]);
 
     const submitForm = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        // Reseteamos estados antes de la nueva petición
         setErrors({});
         setStatus(null);
-        setLoading(true);
 
         const newErrors: Record<string, ErrorMessageType[]> = {};
 
-        // Validaciones del lado del cliente
         if (!email.trim()) {
             newErrors.email = [{ code: 'required_email' }];
         } else if (!/^\S+@\S+\.\S+$/.test(email)) {
@@ -83,6 +63,8 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
         }
 
         try {
+            setLoading(true);
+
             await resetPassword({
                 email,
                 password,
@@ -99,18 +81,18 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
         <form onSubmit={submitForm} className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl">{translations('auth.reset_password')}</CardTitle>
+                    <CardTitle className="text-xl">{translations('reset_password')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
                         <Status status={status} />
                         <div className="grid gap-3">
-                            <Label htmlFor="email">{translations('auth.email')}</Label>
+                            <Label htmlFor="email">{translations('email')}</Label>
                             <Input
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder={translations('auth.placeholder_email')}
+                                placeholder={translations('placeholder_email')}
                                 value={email}
                                 errors={errors.email}
                                 set={setEmail}
@@ -120,14 +102,14 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
                         </div>
                         <div className="grid gap-3">
                             <div className="flex items-center">
-                                <Label htmlFor="password">{translations('auth.password')}</Label>
+                                <Label htmlFor="password">{translations('password')}</Label>
                             </div>
                             <Input
                                 id="password"
                                 name="password"
                                 type="password"
                                 value={password}
-                                placeholder={translations('auth.placeholder_password')}
+                                placeholder={translations('placeholder_password')}
                                 errors={errors.password}
                                 set={setPassword}
                                 setErrors={setErrors}
@@ -136,13 +118,13 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
                         </div>
                         <div className="grid gap-3">
                             <div className="flex items-center">
-                                <Label htmlFor="password">{translations('auth.password_confirmation')}</Label>
+                                <Label htmlFor="password">{translations('password_confirmation')}</Label>
                             </div>
                             <Input
                                 id="password_confirmation"
                                 name="password_confirmation"
                                 type="password"
-                                placeholder={translations('auth.placeholder_confirm_password')}
+                                placeholder={translations('placeholder_confirm_password')}
                                 value={passwordConfirmation}
                                 errors={errors.password_confirmation}
                                 set={setPasswordConfirmation}
@@ -151,7 +133,7 @@ export default function PasswordResetForm({ auth, className, ...props }: Passwor
                             />
                         </div>
                         <Button type="submit" className="w-full cursor-pointer" isLoading={loading}>
-                            {translations('auth.reset_password')}
+                            {translations('reset_password')}
                         </Button>
                     </div>
                 </CardContent>

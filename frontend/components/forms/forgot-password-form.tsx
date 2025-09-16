@@ -8,33 +8,16 @@ import { Label } from "@/components/ui/label";
 import {useLocale, useTranslations} from "next-intl";
 import { useState } from "react";
 import React from "react";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2Icon, CircleAlert } from "lucide-react";
-import { useAuth } from "@/hooks/auth";
 import Status from "@/components/ui/status";
-
-type ErrorMessageType = {
-    code?: string;
-    message?: string;
-};
-
-type StatusType = {
-    success: boolean;
-    code: string;
-    message?: string;
-};
-
-interface ForgotPasswordFormProps {
-    className?: string;
-    auth: ReturnType<typeof useAuth>;
-}
+import {ErrorMessageType, StatusType} from "@/types/common";
+import {AuthFormProps} from "@/types/auth";
 
 export default function ForgotPasswordForm({
                                                className,
                                                auth,
                                                ...props
-                                           }: ForgotPasswordFormProps) {
-    const translations = useTranslations();
+                                           }: AuthFormProps) {
+    const translations = useTranslations('auth');
     const locale = useLocale();
 
     const [email, setEmail] = useState("");
@@ -49,7 +32,6 @@ export default function ForgotPasswordForm({
 
         setErrors({});
         setStatus(null);
-        setLoading(true);
 
         const newErrors: Record<string, ErrorMessageType[]> = {};
         if (!email.trim()) {
@@ -64,6 +46,8 @@ export default function ForgotPasswordForm({
         }
 
         try {
+            setLoading(true);
+
             await forgotPassword({
                 email,
                 locale,
@@ -84,19 +68,19 @@ export default function ForgotPasswordForm({
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">
-                        {translations("auth.reset_password")}
+                        {translations("reset_password")}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
                         <Status status={status} />
                         <div className="grid gap-3">
-                            <Label htmlFor="email">{translations("auth.email")}</Label>
+                            <Label htmlFor="email">{translations("email")}</Label>
                             <Input
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder={translations("auth.placeholder_email")}
+                                placeholder={translations("placeholder_email")}
                                 value={email}
                                 errors={errors.email}
                                 set={setEmail}
@@ -105,7 +89,7 @@ export default function ForgotPasswordForm({
                             />
                         </div>
                         <Button type="submit" className="w-full cursor-pointer" isLoading={loading}>
-                            {translations("auth.send_reset_link")}
+                            {translations("send_reset_link")}
                         </Button>
                     </div>
                 </CardContent>
