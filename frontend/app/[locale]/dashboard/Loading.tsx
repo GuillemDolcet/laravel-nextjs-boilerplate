@@ -1,13 +1,10 @@
+import {Spinner} from "@/components/ui/spinner";
+
 const Loading = () => {
     return (
-        <div className="page">
-            <div className="container container-slim py-4">
-                <div className="text-center">
-                    <div className="text-secondary mb-3">Preparing application</div>
-                    <div className="progress progress-sm">
-                        <div className="progress-bar progress-bar-indeterminate"></div>
-                    </div>
-                </div>
+        <div className="relative min-h-screen">
+            <div className="bg-muted flex min-h-screen flex-col items-center justify-center gap-6 p-6 md:p-10">
+                <Spinner />
             </div>
         </div>
     )
