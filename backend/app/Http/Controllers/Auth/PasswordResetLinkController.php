@@ -38,15 +38,15 @@ class PasswordResetLinkController extends Controller
                 'email' => [
                     [
                         'code' => 'throttle_error',
-                        'message' => __($status)
-                    ]
-                ]
+                        'message' => __($status),
+                    ],
+                ],
             ]);
         }
 
         return response()->json([
             'code' => 'success_password_reset_link_sent',
-            'message' => 'We have emailed your password reset link.'
+            'message' => 'We have emailed your password reset link.',
         ]);
     }
 }

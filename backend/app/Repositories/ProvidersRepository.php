@@ -12,8 +12,6 @@ class ProvidersRepository extends Repository
 {
     /**
      * The actual model class supporting the business logic.
-     *
-     * @return string
      */
     public function getModelClass(): string
     {
@@ -22,9 +20,6 @@ class ProvidersRepository extends Repository
 
     /**
      * *All* providers query context.
-     *
-     * @param array $options
-     * @return Builder
      */
     public function allContext(array $options = []): Builder
     {
@@ -34,7 +29,6 @@ class ProvidersRepository extends Repository
     /**
      * Get *all* providers from the database.
      *
-     * @param array $options
      * @return Collection<int,Provider>
      */
     public function all(array $options = []): Collection
@@ -44,9 +38,6 @@ class ProvidersRepository extends Repository
 
     /**
      * Instantiates a new Provider object.
-     *
-     * @param  array $attributes
-     * @return Provider
      */
     public function build(array $attributes = []): Provider
     {
@@ -55,9 +46,6 @@ class ProvidersRepository extends Repository
 
     /**
      * Creates a Provider instance.
-     *
-     * @param  array $attributes
-     * @return Provider|null
      */
     public function create(array $attributes = []): ?Provider
     {
@@ -66,10 +54,6 @@ class ProvidersRepository extends Repository
 
     /**
      * Listing result set.
-     *
-     * @param Builder $context
-     * @param array $options
-     * @return LengthAwarePaginator
      */
     public function listing(Builder $context, array $options = []): LengthAwarePaginator
     {
@@ -80,10 +64,6 @@ class ProvidersRepository extends Repository
 
     /**
      * Updates a provider instance.
-     *
-     * @param Provider $instance
-     * @param array $attributes
-     * @return Provider|null
      */
     public function update(Provider $instance, array $attributes = []): ?Provider
     {
@@ -100,10 +80,6 @@ class ProvidersRepository extends Repository
 
     /**
      * Gets or creates a Provider model instance.
-     *
-     * @param array $where
-     * @param array $attributes
-     * @return null|Provider
      */
     public function firstOrCreate(array $attributes = [], array $where = ['email']): ?Provider
     {

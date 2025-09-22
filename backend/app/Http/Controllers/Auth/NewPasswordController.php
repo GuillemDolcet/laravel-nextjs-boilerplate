@@ -40,15 +40,15 @@ class NewPasswordController extends Controller
                 'email' => [
                     [
                         'code' => 'user_not_found_with_email',
-                        'message' => __($status)
-                    ]
-                ]
+                        'message' => __($status),
+                    ],
+                ],
             ]);
         }
 
         return response()->json([
             'code' => 'success_password_reset',
-            'message' => 'Your password has been reset.'
+            'message' => 'Your password has been reset.',
         ]);
     }
 }

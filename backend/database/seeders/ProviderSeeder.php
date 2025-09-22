@@ -11,7 +11,7 @@ class ProviderSeeder extends Seeder
     /**
      * Providers repository instance.
      *
-     * @param ProvidersRepository $providersRepository
+     * @param  ProvidersRepository  $providersRepository
      */
     protected ProvidersRepository $providersRepository;
 

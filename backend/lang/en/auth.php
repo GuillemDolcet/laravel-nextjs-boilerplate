@@ -7,5 +7,5 @@ return [
     'reset_password_expires' => 'This password reset link will expire in :count minutes.',
     'no_further_action' => 'If you did not request a password reset, no further action is required.',
     'verify_email_address' => 'Verify Email Address',
-    'verify_email_address_click' => 'Please click the button below to verify your email address.'
+    'verify_email_address_click' => 'Please click the button below to verify your email address.',
 ];

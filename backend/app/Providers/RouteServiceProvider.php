@@ -32,7 +32,7 @@ class RouteServiceProvider extends ServiceProvider
                 ->response(function () {
                     return response()->json([
                         'code' => 'throttle_error',
-                        'message' => 'Too many attempts. Please try again in a few minutes.'
+                        'message' => 'Too many attempts. Please try again in a few minutes.',
                     ], 429);
                 });
         });

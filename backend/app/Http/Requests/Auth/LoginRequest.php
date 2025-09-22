@@ -46,8 +46,8 @@ class LoginRequest extends BaseRequest
 
             throw ValidationException::withMessages([
                 'email' => [
-                    ['code' => 'credentials_do_not_match', 'message' => __('auth.failed')]
-                ]
+                    ['code' => 'credentials_do_not_match', 'message' => __('auth.failed')],
+                ],
             ]);
         }
 
@@ -76,9 +76,9 @@ class LoginRequest extends BaseRequest
                     'message' => trans('auth.throttle', [
                         'seconds' => $seconds,
                         'minutes' => ceil($seconds / 60),
-                    ])
-                ]
-            ]
+                    ]),
+                ],
+            ],
         ]);
     }
 

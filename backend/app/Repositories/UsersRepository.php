@@ -2,18 +2,16 @@
 
 namespace App\Repositories;
 
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use App\Models\User;
 
 class UsersRepository extends Repository
 {
     /**
      * The actual model class supporting the business logic.
-     *
-     * @return string
      */
     public function getModelClass(): string
     {
@@ -22,9 +20,6 @@ class UsersRepository extends Repository
 
     /**
      * *All* users query context.
-     *
-     * @param array $options
-     * @return Builder
      */
     public function allContext(array $options = []): Builder
     {
@@ -34,7 +29,6 @@ class UsersRepository extends Repository
     /**
      * Get *all* users from the database.
      *
-     * @param array $options
      * @return Collection<int,User>
      */
     public function all(array $options = []): Collection
@@ -44,9 +38,6 @@ class UsersRepository extends Repository
 
     /**
      * Instantiates a new User object.
-     *
-     * @param  array $attributes
-     * @return User
      */
     public function build(array $attributes = []): User
     {
@@ -55,9 +46,6 @@ class UsersRepository extends Repository
 
     /**
      * Creates a User instance.
-     *
-     * @param  array $attributes
-     * @return User|null
      */
     public function create(array $attributes = []): ?User
     {
@@ -66,10 +54,6 @@ class UsersRepository extends Repository
 
     /**
      * Listing result set.
-     *
-     * @param Builder $context
-     * @param array $options
-     * @return LengthAwarePaginator
      */
     public function listing(Builder $context, array $options = []): LengthAwarePaginator
     {
@@ -80,10 +64,6 @@ class UsersRepository extends Repository
 
     /**
      * Updates a user instance.
-     *
-     * @param User $instance
-     * @param array $attributes
-     * @return User|null
      */
     public function update(User $instance, array $attributes = []): ?User
     {
@@ -100,10 +80,6 @@ class UsersRepository extends Repository
 
     /**
      * Gets or creates a User model instance.
-     *
-     * @param array $where
-     * @param array $attributes
-     * @return null|User
      */
     public function firstOrCreate(array $attributes = [], array $where = ['email']): ?User
     {
@@ -118,10 +94,6 @@ class UsersRepository extends Repository
 
     /**
      * Finds a user by its email attribute.
-     *
-     * @param string $email
-     * @param array $options
-     * @return User|null
      */
     public function findByEmail(string $email, array $options = []): ?User
     {

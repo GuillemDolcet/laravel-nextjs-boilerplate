@@ -21,11 +21,11 @@ class EmailVerificationNotificationController extends Controller
 
         $locale = $request->input('locale', app()->getLocale());
 
-        $request->user()->notify((new VerifyEmailNotification())->locale($locale));
+        $request->user()->notify((new VerifyEmailNotification)->locale($locale));
 
         return response()->json([
             'code' => 'success_resend_verification_email',
-            'message' => 'A new verification link has been sent to the email address you provided during registration.'
+            'message' => 'A new verification link has been sent to the email address you provided during registration.',
         ]);
     }
 }

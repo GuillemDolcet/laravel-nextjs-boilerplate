@@ -17,8 +17,6 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
     /**
      * The callback that should be used to create the verify email URL.
-     *
-     * @var \Closure|null
      */
     public static ?\Closure $createUrlCallback;
 
@@ -31,9 +29,6 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
     /**
      * Get the notification's channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array|string
      */
     public function via(mixed $notifiable): array|string
     {
@@ -42,9 +37,6 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
     /**
      * Build the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail(mixed $notifiable): MailMessage
     {
@@ -55,9 +47,6 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
     /**
      * Get the verify email notification mail message for the given URL.
-     *
-     * @param string $url
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     protected function buildMailMessage(string $url): MailMessage
     {
@@ -70,9 +59,6 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
 
     /**
      * Get the verification URL for the given notifiable.
-     *
-     * @param  mixed  $notifiable
-     * @return string
      */
     protected function verificationUrl(mixed $notifiable): string
     {

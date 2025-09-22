@@ -10,12 +10,8 @@ trait FindsInstances
 {
     /**
      * Finds a model instance by key.
-     *
-     * @param mixed $id
-     * @param  array $options
-     * @return Collection|null
      */
-    public function find(mixed $id, array $options = []): Collection|null
+    public function find(mixed $id, array $options = []): ?Collection
     {
         if (is_array($id)) {
             return $this->findMany($id);
@@ -28,10 +24,6 @@ trait FindsInstances
 
     /**
      * Finds a model instance by key.
-     *
-     * @param  array $keys
-     * @param  array $options
-     * @return Collection
      */
     public function findMany(array $keys, array $options = []): Collection
     {
@@ -42,10 +34,6 @@ trait FindsInstances
 
     /**
      * Finds a model instance by the supplied attributes.
-     *
-     * @param  array $attributes
-     * @param  array $options
-     * @return Builder|Model|null
      */
     public function findBy(array $attributes, array $options = []): Builder|Model|null
     {
@@ -56,9 +44,6 @@ trait FindsInstances
 
     /**
      * Finds the last instance of a model by key.
-     *
-     * @param array $options
-     * @return Builder|Model|null
      */
     public function findLast(array $options = []): Builder|Model|null
     {
@@ -69,10 +54,6 @@ trait FindsInstances
 
     /**
      * Get all model instances by the supplied attributes.
-     *
-     * @param  array  $attributes
-     * @param  array  $options
-     * @return Collection|array
      */
     public function allBy(array $attributes, array $options = []): Collection|array
     {
@@ -83,11 +64,6 @@ trait FindsInstances
 
     /**
      * Get all model instance for the supplied column attribute values.
-     *
-     * @param string $column
-     * @param array $values
-     * @param array $options
-     * @return Collection|array
      */
     public function findManyBy(string $column, array $values, array $options = []): Collection|array
     {
@@ -98,13 +74,8 @@ trait FindsInstances
 
     /**
      * Finds a model instance by key via the supplied context.
-     *
-     * @param Builder $ctx
-     * @param mixed $id
-     * @param  array                                    $options
-     * @return Collection|null
      */
-    public function findViaContext(Builder $ctx, mixed $id, array $options = []): Collection|null
+    public function findViaContext(Builder $ctx, mixed $id, array $options = []): ?Collection
     {
         if (is_array($id)) {
             return $this->findManyViaContext($ctx, $id, $options);
@@ -117,11 +88,6 @@ trait FindsInstances
 
     /**
      * Finds a model instance by the supplied attributes via the supplied context.
-     *
-     * @param Builder $ctx
-     * @param  array                                    $attributes
-     * @param  array                                    $options
-     * @return Builder|Model|null
      */
     public function findByViaContext(Builder $ctx, array $attributes, array $options = []): Builder|Model|null
     {
@@ -132,11 +98,6 @@ trait FindsInstances
 
     /**
      * Finds a model instance by key via the supplied context.
-     *
-     * @param Builder $ctx
-     * @param  array                                    $keys
-     * @param  array                                    $options
-     * @return Collection
      */
     public function findManyViaContext(Builder $ctx, array $keys, array $options = []): Collection
     {
@@ -147,10 +108,6 @@ trait FindsInstances
 
     /**
      * Applies the supplied options to the given query builder object.
-     *
-     * @param Builder $query
-     * @param  array                                 $options
-     * @return Builder
      */
     protected function applyBuilderOptions(Builder $query, array $options = []): Builder
     {

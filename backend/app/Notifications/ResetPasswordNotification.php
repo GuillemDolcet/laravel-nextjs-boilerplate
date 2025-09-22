@@ -14,15 +14,11 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     /**
      * The password reset token.
-     *
-     * @var string
      */
     public string $token;
 
     /**
      * Create a notification instance.
-     *
-     * @param string $token
      */
     public function __construct(#[\SensitiveParameter] string $token)
     {
@@ -31,9 +27,6 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     /**
      * Get the notification's channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array|string
      */
     public function via(mixed $notifiable): array|string
     {
@@ -42,9 +35,6 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     /**
      * Build the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail(mixed $notifiable): MailMessage
     {
@@ -53,9 +43,6 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     /**
      * Get the reset password notification mail message for the given URL.
-     *
-     * @param string $url
-     * @return \Illuminate\Notifications\Messages\MailMessage
      */
     protected function buildMailMessage(string $url): MailMessage
     {
@@ -65,7 +52,7 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
             ->action(Lang::get('auth.reset_password'), $url)
             ->line(Lang::get('auth.reset_password_expires',
                 [
-                    'count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')
+                    'count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
                 ]
             ))
             ->line(Lang::get('auth.no_further_action'));
@@ -73,9 +60,6 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
 
     /**
      * Get the reset URL for the given notifiable.
-     *
-     * @param  mixed  $notifiable
-     * @return string
      */
     protected function resetUrl(mixed $notifiable): string
     {

@@ -15,7 +15,7 @@ class RegisteredUserController extends Controller
     /**
      * Users repository instance.
      *
-     * @param UsersRepository $usersRepository
+     * @param  UsersRepository  $usersRepository
      */
     protected UsersRepository $usersRepository;
 
@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
         if ($user) {
             $locale = $request->input('locale', app()->getLocale());
 
-            $user->notify((new VerifyEmailNotification())->locale($locale));
+            $user->notify((new VerifyEmailNotification)->locale($locale));
 
             Auth::login($user);
 
@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
 
         return response()->json([
             'code' => 'error_create_user',
-            'message' => 'An error occurred while creating your account. Please try again later.'
+            'message' => 'An error occurred while creating your account. Please try again later.',
         ], 500);
     }
 }

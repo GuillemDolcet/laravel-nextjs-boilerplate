@@ -19,21 +19,22 @@ class Provider extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name'
+        'name',
     ];
 
     public const PROVIDER_GOOGLE = 'google';
+
     public const PROVIDER_GITHUB = 'github';
 
     public static function defaults(): array
     {
         return [
             self::PROVIDER_GOOGLE,
-            self::PROVIDER_GITHUB
+            self::PROVIDER_GITHUB,
         ];
     }
 
-    ///// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
+    // /// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
@@ -44,7 +45,7 @@ class Provider extends Model
                     'provider_account_id',
                     'access_token',
                     'refresh_token',
-                    'expires_at'
+                    'expires_at',
                 ]
             );
     }

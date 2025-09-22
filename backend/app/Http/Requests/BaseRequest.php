@@ -15,7 +15,6 @@ class BaseRequest extends FormRequest
      * - code: short identifier for the field and rule (e.g., email_required)
      * - message: descriptive error message
      *
-     * @param Validator $validator
      * @throws HttpResponseException
      */
     protected function failedValidation(Validator $validator): void
@@ -28,7 +27,7 @@ class BaseRequest extends FormRequest
             foreach ($messages as $message) {
                 $rule = array_key_first($failedRules);
 
-                $code = strtolower($field) . '_' . strtolower($rule);
+                $code = strtolower($field).'_'.strtolower($rule);
 
                 $errors[$field][] = [
                     'code' => $code,
@@ -38,7 +37,7 @@ class BaseRequest extends FormRequest
         }
 
         throw new HttpResponseException(response()->json([
-            'errors' => $errors
+            'errors' => $errors,
         ], 422));
     }
 }

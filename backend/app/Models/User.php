@@ -46,7 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    ///// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
+    // /// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function providers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
@@ -57,7 +57,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     'provider_account_id',
                     'access_token',
                     'refresh_token',
-                    'expires_at'
+                    'expires_at',
                 ]
             );
     }
