@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Models\Provider;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use App\Models\User;
 
-class UsersRepository extends Repository
+class ProvidersRepository extends Repository
 {
     /**
      * The actual model class supporting the business logic.
@@ -17,11 +17,11 @@ class UsersRepository extends Repository
      */
     public function getModelClass(): string
     {
-        return User::class;
+        return Provider::class;
     }
 
     /**
-     * *All* users query context.
+     * *All* providers query context.
      *
      * @param array $options
      * @return Builder
@@ -32,10 +32,10 @@ class UsersRepository extends Repository
     }
 
     /**
-     * Get *all* users from the database.
+     * Get *all* providers from the database.
      *
      * @param array $options
-     * @return Collection<int,User>
+     * @return Collection<int,Provider>
      */
     public function all(array $options = []): Collection
     {
@@ -43,23 +43,23 @@ class UsersRepository extends Repository
     }
 
     /**
-     * Instantiates a new User object.
+     * Instantiates a new Provider object.
      *
      * @param  array $attributes
-     * @return User
+     * @return Provider
      */
-    public function build(array $attributes = []): User
+    public function build(array $attributes = []): Provider
     {
         return $this->make($attributes);
     }
 
     /**
-     * Creates a User instance.
+     * Creates a Provider instance.
      *
      * @param  array $attributes
-     * @return User|null
+     * @return Provider|null
      */
-    public function create(array $attributes = []): ?User
+    public function create(array $attributes = []): ?Provider
     {
         return $this->update($this->build(), $attributes);
     }
@@ -79,13 +79,13 @@ class UsersRepository extends Repository
     }
 
     /**
-     * Updates a user instance.
+     * Updates a provider instance.
      *
-     * @param User $instance
+     * @param Provider $instance
      * @param array $attributes
-     * @return User|null
+     * @return Provider|null
      */
-    public function update(User $instance, array $attributes = []): ?User
+    public function update(Provider $instance, array $attributes = []): ?Provider
     {
         $instance->fill($attributes);
 
@@ -99,13 +99,13 @@ class UsersRepository extends Repository
     }
 
     /**
-     * Gets or creates a User model instance.
+     * Gets or creates a Provider model instance.
      *
      * @param array $where
      * @param array $attributes
-     * @return null|User
+     * @return null|Provider
      */
-    public function firstOrCreate(array $attributes = [], array $where = ['email']): ?User
+    public function firstOrCreate(array $attributes = [], array $where = ['email']): ?Provider
     {
         $findBy = Arr::only($attributes, $where);
 
@@ -114,17 +114,5 @@ class UsersRepository extends Repository
         }
 
         return $this->create($attributes);
-    }
-
-    /**
-     * Finds a user by its email attribute.
-     *
-     * @param string $email
-     * @param array $options
-     * @return User|null
-     */
-    public function findByEmail(string $email, array $options = []): ?User
-    {
-        return $this->findBy(['email' => $email], $options);
     }
 }

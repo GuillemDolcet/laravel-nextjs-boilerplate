@@ -45,4 +45,20 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    ///// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public function providers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Provider::class, 'user_providers', 'user_id', 'provider_id')
+            ->withPivot(
+                [
+                    'provider_account_id',
+                    'access_token',
+                    'refresh_token',
+                    'expires_at'
+                ]
+            );
+    }
 }
