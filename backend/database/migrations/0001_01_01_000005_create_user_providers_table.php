@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_providers', static function (Blueprint $table) {
+        Schema::create('user_social_providers', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('provider_id')->constrained()->onDelete('cascade');
-            $table->string('provider_account_id');
+            $table->foreignId('social_provider_id')->constrained()->onDelete('cascade');
+            $table->string('social_provider_account_id');
             $table->text('access_token')->nullable();
             $table->text('refresh_token')->nullable();
             $table->text('expires_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['provider_id', 'provider_account_id']);
-            $table->unique(['user_id', 'provider_id']);
+            $table->unique(['social_provider_id', 'social_provider_account_id']);
+            $table->unique(['user_id', 'social_provider_id']);
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_providers');
+        Schema::dropIfExists('user_social_providers');
     }
 };

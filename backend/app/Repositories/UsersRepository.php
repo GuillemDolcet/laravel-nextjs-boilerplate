@@ -2,11 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Models\SocialProvider;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class UsersRepository extends Repository
 {
@@ -47,9 +50,9 @@ class UsersRepository extends Repository
     /**
      * Creates a User instance.
      */
-    public function create(array $attributes = []): ?User
+    public function create(array $attributes = [], SocialProvider $social = null): ?User
     {
-        return $this->update($this->build(), $attributes);
+        return $this->update($this->build(), $attributes, $social);
     }
 
     /**
@@ -64,18 +67,36 @@ class UsersRepository extends Repository
 
     /**
      * Updates a user instance.
+     * @throws Throwable
      */
-    public function update(User $instance, array $attributes = []): ?User
+    public function update(User $instance, array $attributes = [], SocialProvider $social = null): ?User
     {
-        $instance->fill($attributes);
+        return DB::transaction(static function () use ($social, $instance, $attributes) {
+            $instance->fill($attributes);
 
-        $result = $instance->save();
+            $result = $instance->save();
 
-        if (! $result) {
-            return null;
-        }
+            if ($social) {
+                $pivotData = [
+                    'social_provider_account_id' => $attributes['social_provider_account_id'],
+                    'access_token'               => $attributes['access_token'],
+                    'refresh_token'              => $attributes['refresh_token'],
+                    'expires_at'                 => $attributes['expired_at'],
+                ];
 
-        return $instance;
+                if ($instance->socialProviders()->where('social_provider_id', $social->getKey())->exists()) {
+                    $instance->socialProviders()->updateExistingPivot($social->getKey(), $pivotData);
+                } else {
+                    $instance->socialProviders()->attach($social->getKey(), $pivotData);
+                }
+            }
+
+            if (! $result) {
+                return null;
+            }
+
+            return $instance;
+        });
     }
 
     /**

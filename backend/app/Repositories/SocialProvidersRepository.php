@@ -2,20 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Models\Provider;
+use App\Models\SocialProvider;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
-class ProvidersRepository extends Repository
+class SocialProvidersRepository extends Repository
 {
     /**
      * The actual model class supporting the business logic.
      */
     public function getModelClass(): string
     {
-        return Provider::class;
+        return SocialProvider::class;
     }
 
     /**
@@ -27,9 +27,9 @@ class ProvidersRepository extends Repository
     }
 
     /**
-     * Get *all* providers from the database.
+     * Get *all* social providers from the database.
      *
-     * @return Collection<int,Provider>
+     * @return Collection<int,SocialProvider>
      */
     public function all(array $options = []): Collection
     {
@@ -37,17 +37,17 @@ class ProvidersRepository extends Repository
     }
 
     /**
-     * Instantiates a new Provider object.
+     * Instantiates a new SocialProvider object.
      */
-    public function build(array $attributes = []): Provider
+    public function build(array $attributes = []): SocialProvider
     {
         return $this->make($attributes);
     }
 
     /**
-     * Creates a Provider instance.
+     * Creates a SocialProvider instance.
      */
-    public function create(array $attributes = []): ?Provider
+    public function create(array $attributes = []): ?SocialProvider
     {
         return $this->update($this->build(), $attributes);
     }
@@ -63,9 +63,9 @@ class ProvidersRepository extends Repository
     }
 
     /**
-     * Updates a provider instance.
+     * Updates a social provider instance.
      */
-    public function update(Provider $instance, array $attributes = []): ?Provider
+    public function update(SocialProvider $instance, array $attributes = []): ?SocialProvider
     {
         $instance->fill($attributes);
 
@@ -79,9 +79,9 @@ class ProvidersRepository extends Repository
     }
 
     /**
-     * Gets or creates a Provider model instance.
+     * Gets or creates a SocialProvider model instance.
      */
-    public function firstOrCreate(array $attributes = [], array $where = ['email']): ?Provider
+    public function firstOrCreate(array $attributes = [], array $where = ['email']): ?SocialProvider
     {
         $findBy = Arr::only($attributes, $where);
 

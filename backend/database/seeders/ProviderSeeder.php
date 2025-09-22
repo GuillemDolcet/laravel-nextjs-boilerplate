@@ -2,27 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\Provider;
-use App\Repositories\ProvidersRepository;
+use App\Models\SocialProvider;
+use App\Repositories\SocialProvidersRepository;
 use Illuminate\Database\Seeder;
 
 class ProviderSeeder extends Seeder
 {
     /**
-     * Providers repository instance.
+     * SocialProviders repository instance.
      *
-     * @param  ProvidersRepository  $providersRepository
+     * @param  SocialProvidersRepository  $providersRepository
      */
-    protected ProvidersRepository $providersRepository;
+    protected SocialProvidersRepository $socialProvidersRepository;
 
     /**
      * Class constructor.
      *
      * @return void
      */
-    public function __construct(ProvidersRepository $providersRepository)
+    public function __construct(SocialProvidersRepository $socialProvidersRepository)
     {
-        $this->providersRepository = $providersRepository;
+        $this->socialProvidersRepository = $socialProvidersRepository;
     }
 
     /**
@@ -30,8 +30,8 @@ class ProviderSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (Provider::defaults() as $name) {
-            $this->providersRepository->create(['name' => $name]);
+        foreach (SocialProvider::defaults() as $name) {
+            $this->socialProvidersRepository->create(['name' => $name]);
         }
     }
 }

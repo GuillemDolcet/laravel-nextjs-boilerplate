@@ -48,17 +48,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // /// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function providers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function socialProviders(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this
-            ->belongsToMany(Provider::class, 'user_providers', 'user_id', 'provider_id')
+            ->belongsToMany(SocialProvider::class, 'user_social_providers', 'user_id', 'social_provider_id')
             ->withPivot(
                 [
-                    'provider_account_id',
+                    'social_provider_account_id',
                     'access_token',
                     'refresh_token',
                     'expires_at',
                 ]
-            );
+            )
+            ->withTimestamps();
     }
 }

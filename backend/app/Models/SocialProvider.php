@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Provider extends Model
+class SocialProvider extends Model
 {
     /**
      * Indicates if the model should be timestamped.
@@ -22,31 +22,32 @@ class Provider extends Model
         'name',
     ];
 
-    public const PROVIDER_GOOGLE = 'google';
+    public const SOCIAL_PROVIDER_GOOGLE = 'google';
 
-    public const PROVIDER_GITHUB = 'github';
+    public const SOCIAL_PROVIDER_GITHUB = 'github';
 
     public static function defaults(): array
     {
         return [
-            self::PROVIDER_GOOGLE,
-            self::PROVIDER_GITHUB,
+            self::SOCIAL_PROVIDER_GOOGLE,
+            self::SOCIAL_PROVIDER_GITHUB,
         ];
     }
 
-    // /// Relations //////////////////////////////////////////////////////////////////////////////////////////////////
+    // / Relations //////////////////////////////////////////////////////////////////////////////////////////////////
 
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this
-            ->belongsToMany(User::class, 'user_providers', 'provider_id', 'user_id')
+            ->belongsToMany(User::class, 'user_social_providers', 'social_provider_id', 'user_id')
             ->withPivot(
                 [
-                    'provider_account_id',
+                    'social_provider_account_id',
                     'access_token',
                     'refresh_token',
                     'expires_at',
                 ]
-            );
+            )
+            ->withTimestamps();
     }
 }
