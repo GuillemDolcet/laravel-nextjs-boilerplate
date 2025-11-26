@@ -38,10 +38,10 @@ export default function LocaleSwitcher() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Globe className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-100" />
-                </Button>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+                <div>
+                    <Globe className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all" />
+                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 {routing.locales

@@ -15,6 +15,7 @@ class GoogleService implements SocialProvidersAuthInterface
         return new UserSocialResource([
             'name' => $googleUser->getName(),
             'email' => $googleUser->getEmail(),
+            'avatar' => $googleUser->getAvatar(),
             'social_provider_account_id' => $googleUser->getId(),
             'access_token' => $googleUser->token,
             'refresh_token' => $googleUser->refreshToken ?? null,

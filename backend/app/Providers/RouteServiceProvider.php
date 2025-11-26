@@ -26,7 +26,18 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('verification', static function (Request $request) {
+        RateLimiter::for('verification.verify', static function (Request $request) {
+            return Limit::perMinute(1)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response(function () {
+                    return response()->json([
+                        'code' => 'throttle_error',
+                        'message' => 'Too many attempts. Please try again in a few minutes.',
+                    ], 429);
+                });
+        });
+
+        RateLimiter::for('verification.notification', static function (Request $request) {
             return Limit::perMinute(1)
                 ->by($request->user()?->id ?: $request->ip())
                 ->response(function () {

@@ -26,11 +26,11 @@ Route::post('/reset-password', [NewPasswordController::class, 'store'])
     ->name('password.store');
 
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
-    ->middleware(['frontend.auth', 'frontend.signed', 'throttle:verification'])
+    ->middleware(['frontend.auth', 'frontend.signed', 'throttle:verification.verify'])
     ->name('verification.verify');
 
 Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-    ->middleware(['frontend.auth', 'throttle:verification'])
+    ->middleware(['frontend.auth', 'throttle:verification.notification'])
     ->name('verification.send');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
