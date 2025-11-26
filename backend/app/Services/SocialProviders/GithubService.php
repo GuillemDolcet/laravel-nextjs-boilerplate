@@ -15,6 +15,7 @@ class GithubService implements SocialProvidersAuthInterface
         return new UserSocialResource([
             'name' => $githubUser->getName() ?? $githubUser->getNickname(),
             'email' => $githubUser->getEmail(),
+            'avatar' => $githubUser->getAvatar(),
             'social_provider_account_id' => $githubUser->getId(),
             'access_token' => $githubUser->token,
             'refresh_token' => $githubUser->refreshToken ?? null,

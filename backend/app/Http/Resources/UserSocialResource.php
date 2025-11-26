@@ -15,6 +15,7 @@ class UserSocialResource extends JsonResource
         return [
             'name' => $this['name'],
             'email' => $this['email'],
+            'avatar' => $this['avatar'],
             'access_token' => $this['access_token'],
             'refresh_token' => $this['refresh_token'],
             'expired_at' => $this['expired_at'],
